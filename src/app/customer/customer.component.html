@@ -1,0 +1,84 @@
+<h2> CUSTOMERS </h2>
+
+<!--<ul class="heroes">
+    <li *ngFor="let c of customers | async">
+         {{c.name}}
+         {{c.issubcribed}}
+         <b>{{c.demoId}}</b>
+         {{c.id}}
+    </li>
+</ul>-->
+<div class="newcustomer">
+    <form class="k-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <fieldset class="k-form-fieldset">
+            <legend class="k-form-legend">Your account</legend>
+            <kendo-formfield>
+                <kendo-label  text="Name"></kendo-label>
+                <input formControlName="name" kendoTextBox #username required/>
+                <kendo-formerror>Error: Username is required</kendo-formerror>
+            </kendo-formfield>
+            <kendo-formfield>
+                <div class="k-checkbox-wrap">
+                    <input type="checkbox" kendoCheckBox formControlName="issubcribed"/>
+                    <kendo-label  class="k-checkbox-label" text="check it to subscribe in"></kendo-label>
+                </div>  
+            </kendo-formfield>
+            <kendo-formfield>
+                <kendo-label  text="Select offer method"></kendo-label>
+                <kendo-dropdownlist
+                    [data]="data"
+                    [textField]="'text'"
+                    [valueField]="'demoId'"
+                    [filterable]="true"
+                    formControlName="demoId"
+                    [valuePrimitive] = "true"
+                    (filterChange)="handleFilter($event)"
+                >
+                </kendo-dropdownlist>
+            </kendo-formfield>
+
+            <div class="k-form-buttons">
+                <button type="submit" class="k-button k-primary">Add Customer</button>
+                <button class="k-button" (click)="clearForm()">Clear</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<br>
+<kendo-grid 
+[kendoGridBinding]="customers | async"
+[filterable]="true"
+[pageSize]="state.take"
+[skip]="state.skip"
+[sort]="state.sort"
+[filter]="state.filter"
+[sortable]="true"
+[pageable]="true"
+[columnMenu]="true"
+[filterable]="true">
+<ng-template kendoGridToolbarTemplate>
+    <button kendoGridExcelCommand type="button" icon="file-excel" style="float:right;">Export to Excel</button>
+    <button kendoGridPDFCommand icon="file-pdf" style="float:right;">Export to PDF</button>
+</ng-template>
+    <kendo-grid-column field="id" title="ID" width="140" [filterable]="false">
+    </kendo-grid-column>
+    <kendo-grid-column field="name" title="Name" width="250">
+    </kendo-grid-column>
+    <kendo-grid-column field="issubcribed" title="IsSubcribe" width="120" filter="boolean">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <input type="checkbox" [checked]="dataItem.issubcribed" disabled/>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="demo.name" title="Category">
+    </kendo-grid-column>
+    <kendo-grid-column field="demo.discount" title="Discount" filter="numeric" format="{0:c}">
+    </kendo-grid-column>
+    <kendo-grid-command-column title="command" width="220">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <button (click)="loadcustomertoedit(dataItem.id)">Edit</button>
+            <button (click)="deletecustomer(dataItem.id)">Delete</button>
+        </ng-template>
+    </kendo-grid-command-column>
+    <kendo-grid-pdf fileName="Customers.pdf" [allPages]="true" [repeatHeaders]="true"></kendo-grid-pdf>
+    <kendo-grid-excel fileName="Customers.xlsx"></kendo-grid-excel>
+</kendo-grid>
